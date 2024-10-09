@@ -79,7 +79,7 @@ RSpec.describe "Users API", type: :request do
       expect(response).to be_successful
       json = JSON.parse(response.body, symbolize_names: true)
 
-      expect(json[:data].count).to eq(3)
+      expect(json[:data].count).to eq(6)
       expect(json[:data][0][:attributes]).to have_key(:name)
       expect(json[:data][0][:attributes]).to have_key(:username)
       expect(json[:data][0][:attributes]).to_not have_key(:password)
