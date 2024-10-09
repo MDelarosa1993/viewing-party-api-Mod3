@@ -15,16 +15,16 @@ class Api::V1::ViewingPartiesController < ApplicationController
     new_invitee = User.find_by(id: params[:invitee_user_id])
     
     if viewing_party.nil?
-      return render json: { error: 'Viewing Party not found' }, status: :not_found
+      return render json: { error: 'Viewing Party not found' }
     elsif new_invitee.nil?
-      return render json: { error: 'Invitee not found' }, status: :not_found
+      return render json: { error: 'Invitee not found' }
     end
 
     unless viewing_party.users.include?(new_invitee)
       viewing_party.users << new_invitee
     end
 
-    render json: ViewingPartySerializer.new(viewing_party).serializable_hash, status: :ok
+    render json: ViewingPartySerializer.new(viewing_party)
   end
 
 
