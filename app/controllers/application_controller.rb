@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
   private
 
   def authorize_api_key
-    current_user = User.find_by(api_key: params[:api_key])
-    render json: { error: 'Invalid API key' }, status: :unauthorized unless current_user
+    @current_user = User.find_by(api_key: params[:api_key])
+    render json: { error: 'Invalid API key' }, status: :unauthorized unless @current_user
   end
 end
