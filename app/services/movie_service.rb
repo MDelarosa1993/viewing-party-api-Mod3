@@ -25,10 +25,10 @@ class MovieService
     end
     response = conn.get("/3/movie/#{movie_id}", { append_to_response: 'credits,reviews' })
     json = JSON.parse(response.body, symbolize_names: true)
-     
+    
     movie_details = json
     cast = json.dig(:credits, :cast) #credits is the object and cast is the array in the movie api
-    reviews = json.dig(:reviews, :results)  #reviews is the object and results is the array in the movie api
+    reviews = json.dig(:reviews, :results)#reviews is the object and results is the array in the movie api
     MovieSerializer.format_movie_details(movie_details, cast, reviews)
   end
 end
