@@ -1,17 +1,13 @@
-# Viewing Part API - Solo Project
+1. Structure Your README
+   Add a section in your README file specifically for API documentation. This could be titled "API Endpoints" or something similar.
 
-This is the base repo for the Viewing Party Solo Project for Module 3 in Turing's Software Engineering Program. 
+2. List the Endpoints
+   For each endpoint, include the following details:
 
-## About this Application
-
-Viewing Party is an application that allows users to explore movies and create a Viewing Party Event that invites users and keeps track of a host. Once completed, this application will collect relevant information about movies from an external API, provide CRUD functionality for creating a Viewing Party and restrict its use to only verified users. 
-
-## Setup
-
-1. Fork and clone the repo
-2. Install gem packages: `bundle install`
-3. Setup the database: `rails db:{drop,create,migrate,seed}`
-
-Spend some time familiarizing yourself with the functionality and structure of the application so far.
-
-Run the application and test out some endpoints: `rails s`
+HTTP Method: (GET, POST, PATCH, DELETE)
+Path: The URL for the endpoint.
+Description: A brief explanation of what the endpoint does.
+Headers: Information about any required headers (e.g., API key).
+Query Parameters: If applicable, specify any query parameters.
+Request Body: For POST or PATCH requests, provide example request body data.
+Response: Describe the structure of the response and potential status codes.
