@@ -67,7 +67,7 @@ RSpec.describe "Api::V1::Movies", type: :request do
       expect(movie_details[:title]).to be_a(String)
       expect(movie_details[:release_year]).to be_a(Integer)
       expect(movie_details[:vote_average]).to be_a(Float)
-      expect(movie_details[:runtime]).to be_a(Integer)
+      expect(movie_details[:runtime]).to be_a(String)
       expect(movie_details[:summary]).to be_a(String)
       expect(movie_details[:genres]).to be_an(Array)
 

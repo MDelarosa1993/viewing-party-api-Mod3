@@ -12,4 +12,5 @@ class User < ApplicationRecord
   def viewing_parties_hosted
     ViewingParty.where(host_id: id) 
   end
+
 end

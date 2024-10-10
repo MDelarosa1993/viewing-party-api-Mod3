@@ -23,7 +23,7 @@ class MovieSerializer
           title: movie_details[:title],
           release_year: Date.parse(movie_details[:release_date]).year,
           vote_average: movie_details[:vote_average],
-          runtime: movie_details[:runtime],
+          runtime: format_runtime(movie_details[:runtime]),
           genres: movie_details[:genres],
           summary: movie_details[:overview],
           cast: format_cast(cast),
@@ -35,6 +35,12 @@ class MovieSerializer
   end
 
   private
+
+   def self.format_runtime(runtime_minutes)
+      hours = runtime_minutes / 60
+      minutes = runtime_minutes % 60
+      "#{hours}h #{minutes}m"
+   end
 
   def self.format_cast(cast)
     cast.first(10).map do |member|

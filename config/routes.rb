@@ -17,7 +17,7 @@ Rails.application.routes.draw do
           get 'search', to: 'movies#index'
         end
       end
-      resources :viewing_parties, only: [:create, :update]
+      resources :viewing_parties, only: [:index, :create, :update]
     end
   end
    
