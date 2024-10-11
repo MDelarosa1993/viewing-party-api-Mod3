@@ -11,7 +11,6 @@ RSpec.describe User, type: :model do
   end
 
   describe '#instance_methods' do 
-    User.destroy_all
     it 'gets the parties it hosted' do
       user = User.create!(name: "Danny DeVito", username: "danny_de_v", password: "jerseyMikesRox7")
       party1 = ViewingParty.create!(name: "Party 1", start_time: "2025-02-01 10:00:00", end_time: "2025-02-01 14:30:00", movie_id: 1, movie_title: "Movie 1", host_id: user.id)

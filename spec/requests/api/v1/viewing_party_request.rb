@@ -40,7 +40,7 @@ RSpec.describe "ViewingParty", type: :request do
     end
   end
   describe "Create viewing party" do 
-    it 'creates a viewing party with all the neccessary attributes' do
+    it 'creates a viewing party with all the neccessary attributes', :vcr do
       ViewingParty.destroy_all
       User.destroy_all
       # require 'pry'; binding.pry

@@ -24,8 +24,9 @@ RSpec.describe ViewingParty, type: :model do
         movie_title: "Movie Title",
         invitees: [invitee1.id, invitee2.id]
       }
+      movie_runtime = "2h 0m"
 
-      viewing_party = ViewingParty.create_with_invitees(party_params, host)
+      viewing_party = ViewingParty.create_with_invitees(party_params, host, movie_runtime)
 
       expect(viewing_party).to be_present
       expect(viewing_party.host).to eq(host)
@@ -43,9 +44,57 @@ RSpec.describe ViewingParty, type: :model do
         movie_title: "Movie Title"
       }
 
-      viewing_party = ViewingParty.create_with_invitees(party_params, host)
+      movie_runtime = "2h 0m"
+
+      viewing_party = ViewingParty.create_with_invitees(party_params, host, movie_runtime)
 
       expect(viewing_party).to be_nil
     end
   end
+
+  describe '#long_enough?' do
+      it 'returns true if the party duration is long enough for the movie' do
+        party = ViewingParty.new(
+          start_time: Time.now,
+          end_time: Time.now + 3.hours, # 3 hours
+          movie_id: 1,
+          movie_title: "Movie Title"
+        )
+
+        expect(party.long_enough?(120)).to be(true) 
+      end
+
+      it 'returns false if the party duration is not long enough for the movie' do
+        party = ViewingParty.new(
+          start_time: Time.now,
+          end_time: Time.now + 1.hour, # 1 hour
+          movie_id: 1,
+          movie_title: "Movie Title"
+        )
+
+        expect(party.long_enough?(120)).to be(false) 
+      end
+    end
+
+    describe '.convert_runtime_to_minutes' do
+      it 'converts a runtime string in "xh ym" format to minutes' do
+        expect(ViewingParty.convert_runtime_to_minutes("2h 30m")).to eq(150)
+      end
+
+      it 'converts a runtime string with only hours to minutes' do
+        expect(ViewingParty.convert_runtime_to_minutes("2h")).to eq(120)
+      end
+
+      it 'converts a runtime string with only minutes to minutes' do
+        expect(ViewingParty.convert_runtime_to_minutes("45m")).to eq(45)
+      end
+
+      it 'returns 0 for an empty runtime string' do
+        expect(ViewingParty.convert_runtime_to_minutes("")).to eq(0)
+      end
+
+      it 'returns 0 if the format is incorrect' do
+        expect(ViewingParty.convert_runtime_to_minutes("invalid format")).to eq(0)
+      end
+    end
 end

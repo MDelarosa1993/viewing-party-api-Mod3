@@ -27,8 +27,8 @@ class MovieService
     json = JSON.parse(response.body, symbolize_names: true)
     
     movie_details = json
-    cast = json.dig(:credits, :cast) #credits is the object and cast is the array in the movie api
-    reviews = json.dig(:reviews, :results)#reviews is the object and results is the array in the movie api
+    cast = json[:credits][:cast] #credits is the object and cast is the array in the movie api
+    reviews = json[:reviews][:results]#reviews is the object and results is the array in the movie api
     MovieSerializer.format_movie_details(movie_details, cast, reviews)
   end
 end
