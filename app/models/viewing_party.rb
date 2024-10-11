@@ -5,18 +5,44 @@ class ViewingParty < ApplicationRecord
 
   validates :name, :start_time, :end_time, :movie_id, :movie_title, presence: true
 
-  def self.create_with_invitees(party_params, host)
+  def self.create_with_invitees(party_params, host, movie_runtime)
     viewing_party = new(party_params.except(:invitees))
     viewing_party.host = host
+    movie_runtime_minutes = convert_runtime_to_minutes(movie_runtime)
 
+    invitee_ids = party_params[:invitees] || []
+    if !viewing_party.long_enough?(movie_runtime_minutes)
+      return nil, "Party duration is too short for this movie."
+    end
     if viewing_party.save
-      party_params[:invitees].each do |invitee_id|
+      invitee_ids.each do |invitee_id|
         user = User.find_by(id: invitee_id)
         viewing_party.users << user if user
       end
-      viewing_party
+      return viewing_party
     else
-      nil
+      return nil
     end
   end
+
+
+
+  def long_enough?(movie_runtime)
+    party_duration = ((end_time - start_time) / 60).to_i
+    party_duration >= movie_runtime.to_i
+  end
+
+  def self.convert_runtime_to_minutes(runtime_str)
+    hours = 0
+    minutes = 0
+    if runtime_str.match?(/(\d+)h\s*(\d+)m/)
+      hours, minutes = runtime_str.scan(/(\d+)h\s*(\d+)m/).flatten.map(&:to_i)
+    elsif runtime_str.match?(/(\d+)h/)
+      hours = runtime_str.scan(/(\d+)h/).flatten.map(&:to_i).first
+    elsif runtime_str.match?(/(\d+)m/)
+      minutes = runtime_str.scan(/(\d+)m/).flatten.map(&:to_i).first
+    end
+    (hours * 60) + (minutes)
+  end
+
 end
