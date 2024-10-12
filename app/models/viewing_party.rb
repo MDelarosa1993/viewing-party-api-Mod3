@@ -33,16 +33,9 @@ class ViewingParty < ApplicationRecord
   end
 
   def self.convert_runtime_to_minutes(runtime_str)
-    hours = 0
-    minutes = 0
-    if runtime_str.match?(/(\d+)h\s*(\d+)m/)
-      hours, minutes = runtime_str.scan(/(\d+)h\s*(\d+)m/).flatten.map(&:to_i)
-    elsif runtime_str.match?(/(\d+)h/)
-      hours = runtime_str.scan(/(\d+)h/).flatten.map(&:to_i).first
-    elsif runtime_str.match?(/(\d+)m/)
-      minutes = runtime_str.scan(/(\d+)m/).flatten.map(&:to_i).first
-    end
-    (hours * 60) + (minutes)
+    hours = runtime_str[/(\d)h/, 1].to_i
+    minutes = runtime_str[/(\d+)m/, 1].to_i
+    (hours * 60) + minutes
   end
 
 end
