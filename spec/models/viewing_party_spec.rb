@@ -56,7 +56,7 @@ RSpec.describe ViewingParty, type: :model do
       it 'returns true if the party duration is long enough for the movie' do
         party = ViewingParty.new(
           start_time: Time.now,
-          end_time: Time.now + 3.hours, # 3 hours
+          end_time: Time.now + 3.hours, 
           movie_id: 1,
           movie_title: "Movie Title"
         )
@@ -67,7 +67,7 @@ RSpec.describe ViewingParty, type: :model do
       it 'returns false if the party duration is not long enough for the movie' do
         party = ViewingParty.new(
           start_time: Time.now,
-          end_time: Time.now + 1.hour, # 1 hour
+          end_time: Time.now + 1.hour, 
           movie_id: 1,
           movie_title: "Movie Title"
         )
