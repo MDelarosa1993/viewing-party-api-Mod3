@@ -24,6 +24,7 @@ class MovieService
       faraday.params['api_key'] = Rails.application.credentials.movie_api[:key]
     end
     response = conn.get("/3/movie/#{movie_id}", { append_to_response: 'credits,reviews' })
+    # require 'pry'; binding.pry
     json = JSON.parse(response.body, symbolize_names: true)
     
     movie_details = json
