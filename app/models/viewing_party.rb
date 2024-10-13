@@ -3,7 +3,8 @@ class ViewingParty < ApplicationRecord
   has_many :viewing_party_users
   has_many :users, through: :viewing_party_users
 
-  validates :name, :start_time, :end_time, :movie_id, :movie_title, presence: true
+  validates :start_time, :end_time, :movie_id, :movie_title, presence: true
+  validates :name, presence: true, uniqueness: true
 
   def self.create_with_invitees(party_params, host, movie_runtime)
     viewing_party = new(party_params.except(:invitees))
