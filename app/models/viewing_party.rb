@@ -9,9 +9,9 @@ class ViewingParty < ApplicationRecord
   def self.create_with_invitees(party_params, host, movie_runtime)
     missing_attributes = validate_party_params(party_params)
     unless missing_attributes.empty?
-      return nil, "Missing attributes: #{missing_attributes.join(', ')}"
+      return nil
     end
-    
+
     viewing_party = new(party_params.except(:invitees))
     viewing_party.host = host
     movie_runtime_minutes = convert_runtime_to_minutes(movie_runtime)
