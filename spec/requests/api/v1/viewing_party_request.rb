@@ -40,40 +40,42 @@ RSpec.describe "ViewingParty", type: :request do
     end
   end
   describe "Create viewing party" do 
-    it 'creates a viewing party with all the neccessary attributes', :vcr do
-      ViewingParty.destroy_all
-      User.destroy_all
-      # require 'pry'; binding.pry
-      user = User.create!(name: "Danny DeVito", username: "danny_de_v", password_digest: "e1An2gAidDbWtJuhbHFKryjU", password: "jerseyMikesRox7")
-      invitee1 = User.create(name: "Hannah", username: "ha_merc", password: "mercado1234")
-      invitee2 = User.create(name: "Sabrina", username: "sa_dela", password: "delarosa123")
-      invitee3 = User.create(name: "Aldo", username: "al_merc", password: "al_mercado1234")
-      party_params = {
-        name: "Juliet's Bday Movie Bash!",
-        start_time: "2025-02-01 10:00:00",
-        end_time: "2025-02-01 14:30:00",
-        movie_id: 278,
-        movie_title: "The Shawshank Redemption",
-        api_key: user.api_key, 
-        invitees: [invitee1.id, invitee2.id, invitee3.id] 
-      }
-      post "/api/v1/viewing_parties",  params: party_params 
-      
-      expect(response).to be_successful
+    it 'creates a viewing party with all the neccessary attributes' do
+      VCR.use_cassette('creates a viewing party with all the neccessary attributes') do 
+        ViewingParty.destroy_all
+        User.destroy_all
+        # require 'pry'; binding.pry
+        user = User.create!(name: "Danny DeVito", username: "danny_de_v", password_digest: "e1An2gAidDbWtJuhbHFKryjU", password: "jerseyMikesRox7")
+        invitee1 = User.create(name: "Hannah", username: "ha_merc", password: "mercado1234")
+        invitee2 = User.create(name: "Sabrina", username: "sa_dela", password: "delarosa123")
+        invitee3 = User.create(name: "Aldo", username: "al_merc", password: "al_mercado1234")
+        party_params = {
+          name: "Juliet's Bday Movie Bash!",
+          start_time: "2025-02-01 10:00:00",
+          end_time: "2025-02-01 14:30:00",
+          movie_id: 278,
+          movie_title: "The Shawshank Redemption",
+          api_key: user.api_key, 
+          invitees: [invitee1.id, invitee2.id, invitee3.id] 
+        }
+        post "/api/v1/viewing_parties",  params: party_params 
+        
+        expect(response).to be_successful
 
-      new_party = JSON.parse(response.body, symbolize_names: true)[:data][:attributes]
-      
-      expect(new_party[:end_time]).to be_a(String)
-      expect(new_party[:id]).to be_a(Integer)
-      expect(new_party).to have_key(:invitees)
-      expect(new_party[:invitees]).to be_an(Array)
+        new_party = JSON.parse(response.body, symbolize_names: true)[:data][:attributes]
+        
+        expect(new_party[:end_time]).to be_a(String)
+        expect(new_party[:id]).to be_a(Integer)
+        expect(new_party).to have_key(:invitees)
+        expect(new_party[:invitees]).to be_an(Array)
 
-      new_party[:invitees].each do |invitee|
-        expect(invitee).to have_key(:id)
-        expect(invitee[:id]).to be_an(Integer)
-        expect(invitee).to have_key(:name)
-        expect(invitee[:name]).to be_a(String)
-        expect(invitee).to have_key(:username)
+        new_party[:invitees].each do |invitee|
+          expect(invitee).to have_key(:id)
+          expect(invitee[:id]).to be_an(Integer)
+          expect(invitee).to have_key(:name)
+          expect(invitee[:name]).to be_a(String)
+          expect(invitee).to have_key(:username)
+        end
       end
     end
     
@@ -125,35 +127,39 @@ RSpec.describe "ViewingParty", type: :request do
 
   describe 'sad_paths' do 
     it "returns an unauthorized error" do
-        post "/api/v1/viewing_parties", params: {
+      ViewingParty.destroy_all
+      User.destroy_all
+        params = {
           name: "Movie Night",
           start_time: "2025-02-01 10:00:00",
           end_time: "2025-02-01 14:30:00",
-          movie_id: 1,
           movie_title: "Movie Title",
           invitees: []
         }
-
+        post "/api/v1/viewing_parties", params: params
+        
         expect(response).to have_http_status(:unauthorized)
       
         json_response = JSON.parse(response.body, symbolize_names: true)
-        expect(json_response[:message]).to eq('Invalid API key')
+        expect(json_response[:message]).to eq('Invalid Api key')
         expect(json_response[:status]).to eq("unauthorized")
       end
 
     it "returns an error for missing attributes" do
-      user = User.create!(name: "Test User", username: "test_user", password: "password", api_key: "valid_api_key")
-      post "/api/v1/viewing_parties", params: {
-        start_time: "2025-02-01 10:00:00",
-        end_time: "2025-02-01 14:30:00",
-        api_key: user.api_key 
-      }
+      VCR.use_cassette("returns an error for missing attributes") do
+        user = User.create!(name: "Test User", username: "test_user", password: "password", api_key: "valid_api_key")
+        params = {
+          start_time: "2025-02-01 10:00:00",
+          end_time: "2025-02-01 14:30:00",
+          api_key: user.api_key 
+        }
+        post "/api/v1/viewing_parties", params: params
+        expect(response).to have_http_status(:unprocessable_entity) 
 
-      expect(response).to have_http_status(:unprocessable_entity) 
-      json_response = JSON.parse(response.body, symbolize_names: true)
-      
-      expect(json_response[:message]).to be_an(Array)
-      expect(json_response[:status]).to be_a(String)
+        json_response = JSON.parse(response.body, symbolize_names: true)
+        
+        expect(json_response[:message]).to eq("Missing attributes: name, movie_id, movie_title")
+      end
     end
   end
 end

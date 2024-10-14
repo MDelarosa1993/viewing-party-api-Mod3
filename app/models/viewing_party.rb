@@ -7,6 +7,11 @@ class ViewingParty < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   def self.create_with_invitees(party_params, host, movie_runtime)
+    missing_attributes = validate_party_params(party_params)
+    unless missing_attributes.empty?
+      return nil, "Missing attributes: #{missing_attributes.join(', ')}"
+    end
+    
     viewing_party = new(party_params.except(:invitees))
     viewing_party.host = host
     movie_runtime_minutes = convert_runtime_to_minutes(movie_runtime)
@@ -26,7 +31,15 @@ class ViewingParty < ApplicationRecord
     end
   end
 
-
+   def self.validate_party_params(party_params)
+    missing_attributes = []
+    missing_attributes << 'name' if party_params[:name].blank?
+    missing_attributes << 'movie_id' if party_params[:movie_id].blank?
+    missing_attributes << 'movie_title' if party_params[:movie_title].blank?
+    missing_attributes << 'start_time' if party_params[:start_time].blank?
+    missing_attributes << 'end_time' if party_params[:end_time].blank?
+    missing_attributes
+   end
 
   def long_enough?(movie_runtime)
     party_duration = ((end_time - start_time) / 60).to_i
@@ -34,6 +47,8 @@ class ViewingParty < ApplicationRecord
   end
 
   def self.convert_runtime_to_minutes(runtime_str)
+    return 0 if runtime_str.nil?
+
     hours = runtime_str[/(\d)h/, 1].to_i
     minutes = runtime_str[/(\d+)m/, 1].to_i
     (hours * 60) + minutes

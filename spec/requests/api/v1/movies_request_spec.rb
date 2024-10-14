@@ -68,7 +68,7 @@ RSpec.describe "Api::V1::Movies", type: :request do
   end
 
   describe 'Get/movie_details' do 
-     it 'retrieves movie details by id, adds cast and reviews', :vcr do 
+     it 'retrieves movie details by id, adds cast and reviews' do 
       VCR.use_cassette("retrieves_movie_details_by_id_adds_cast_and_reviews") do
         movie_id = 278
         # json_response = File.read("spec/fixtures/movie_credits_reviews.json")  

@@ -2,17 +2,18 @@ class Api::V1::ViewingPartiesController < ApplicationController
   before_action :authorize_api_key, only: [:create, :update]
 
   def create
+    return if @current_user.nil?
     begin
       run_time = MovieService.get_movie_details(params[:movie_id])[:data][:attributes][:runtime]
       viewing_party, error_message = ViewingParty.create_with_invitees(party_params, @current_user, run_time)
 
       if viewing_party.nil?
-        render json: { message: error_message }
+        render json: { message: error_message }, status: :unprocessable_entity
       else
         render json: ViewingPartySerializer.new(viewing_party)
       end
     rescue ActiveRecord::RecordInvalid => e
-      render json: { message: e.record.errors.full_messages }
+      render json: { message: e.record.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -47,9 +48,11 @@ class Api::V1::ViewingPartiesController < ApplicationController
 
    def authorize_api_key
     @current_user = User.find_by(api_key: params[:api_key])
+      
     if @current_user.nil?
-      error = ErrorMessage.new('Invalid API key', :unauthorized)
-      render json: ErrorSerializer.format_error(error.message, :unauthorized)
+      render json: ErrorSerializer.format_error("Invalid Api key", :unauthorized), status: :unauthorized
+      return 
     end
    end
+
 end

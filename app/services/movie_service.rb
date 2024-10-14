@@ -20,16 +20,19 @@ class MovieService
   end
 
   def self.get_movie_details(movie_id)
-    conn = Faraday.new(url: "https://api.themoviedb.org/3") do |faraday|
+    conn = Faraday.new(url: "https://api.themoviedb.org") do |faraday|
       faraday.params['api_key'] = Rails.application.credentials.movie_api[:key]
     end
-    response = conn.get("/3/movie/#{movie_id}", { append_to_response: 'credits,reviews' })
-    # require 'pry'; binding.pry
+  
+    # response = conn.get("/3/movie/#{movie_id}", { append_to_response: 'credits,reviews' })
+    response = conn.get("/3/movie/#{movie_id}")
+
+   
     json = JSON.parse(response.body, symbolize_names: true)
-    
+    # require 'pry'; binding.pry
     movie_details = json
-    cast = json[:credits][:cast] #credits is the object and cast is the array in the movie api
-    reviews = json[:reviews][:results]#reviews is the object and results is the array in the movie api
+    cast = json.dig(:credits, :cast) || []#credits is the object and cast is the array in the movie api
+    reviews = json.dig(:reviews, :results) || []#reviews is the object and results is the array in the movie api
     MovieSerializer.format_movie_details(movie_details, cast, reviews)
   end
 end
