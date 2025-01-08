@@ -6,7 +6,7 @@ orbs:
 jobs:
   test:
     docker:
-      - image: cimg/ruby:3.2-node 
+      - image: cimg/ruby:3.2.2-node 
       - image: circleci/postgres:13.3 
         environment:
           POSTGRES_USER: postgres
