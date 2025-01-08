@@ -12,6 +12,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: viewing_party_api_test
           POSTGRES_PASSWORD: ""
+          POSTGRES_HOST_AUTH_METHOD: trust
     environment:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:@localhost/viewing_party_api_test
